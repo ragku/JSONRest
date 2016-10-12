@@ -35,7 +35,6 @@ public class MethodUtil {
         return true;
     }
  
- 
     /**
      * 
      * <p>获取方法的参数名</p>
@@ -53,7 +52,8 @@ public class MethodUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        cr.accept(new ClassVisitor(Opcodes.ASM4, cw) {
+        
+        cr.accept(new ClassVisitor(Opcodes.ASM5, cw) {
             @Override
             public MethodVisitor visitMethod(final int access,
                     final String name, final String desc,
@@ -67,7 +67,7 @@ public class MethodUtil {
                 }
                 MethodVisitor v = cv.visitMethod(access, name, desc, signature,
                         exceptions);
-                return new MethodVisitor(Opcodes.ASM4, v) {
+                return new MethodVisitor(Opcodes.ASM5, v) {
                     @Override
                     public void visitLocalVariable(String name, String desc,
                             String signature, Label start, Label end, int index) {

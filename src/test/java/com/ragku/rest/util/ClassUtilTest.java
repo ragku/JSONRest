@@ -23,35 +23,22 @@ public class ClassUtilTest {
 			}
 			wc.addClass(a.getName(), a);
 			for(Method m : a.getMethods()) {
+				String[] paramNames = MethodUtil.getMethodParamNames(m);
 				PostMapping pm = m.getAnnotation(PostMapping.class);
 				if(null != pm) {
-					wc.addMethod(pm.value(), a.newInstance(), m);
+					wc.addMethod(pm.value(), a.newInstance(), m, paramNames);
 				}
 				PutMapping putm = m.getAnnotation(PutMapping.class);
 				if(null != putm) {
-					wc.addMethod(putm.value(), a.newInstance(), m);
+					wc.addMethod(putm.value(), a.newInstance(), m, paramNames);
 				}
 				DeleteMapping dm = m.getAnnotation(DeleteMapping.class);
 				if(null != dm) {
-					wc.addMethod(dm.value(), a.newInstance(), m);
+					wc.addMethod(dm.value(), a.newInstance(), m, paramNames);
 				}
 				GetMapping gm = m.getAnnotation(GetMapping.class);
 				if(null != gm) {
-					System.out.println(m.getParameters()[0].getName());
-					wc.addMethod(gm.value(), a.newInstance(), m);
-					try {
-						Object o = m.invoke(a.newInstance(), "aaaa");
-						System.out.println(o);
-					} catch (IllegalAccessException e) {
-						e.printStackTrace();
-					} catch (IllegalArgumentException e) {
-						e.printStackTrace();
-					} catch (InvocationTargetException e) {
-						e.printStackTrace();
-					} catch (InstantiationException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					wc.addMethod(gm.value(), a.newInstance(), m, paramNames);
 				}
 			}
 		}

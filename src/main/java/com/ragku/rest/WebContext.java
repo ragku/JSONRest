@@ -14,14 +14,15 @@ public class WebContext {
 		beanPool.put(className, classInstant);
 	}
 	
-	public void addMethod(String mapper, Object obj, Method m) {
+	public void addMethod(String mapper, Object obj, Method m, String[] paramNames) {
 		RouteInfo ri = new RouteInfo();
 		ri.setController(obj);
 		ri.setMethod(m);
+		
 		rutePool.put(mapper, ri);
 	}
 	
-	public Map<String, RouteInfo> getMethod() {
-		return rutePool;
+	public RouteInfo getRoute(String key) {
+		return rutePool.get(key);
 	}
 }
