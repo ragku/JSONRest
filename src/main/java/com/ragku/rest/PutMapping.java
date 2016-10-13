@@ -1,4 +1,4 @@
-package com.ragku.rest.annotation;
+package com.ragku.rest;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

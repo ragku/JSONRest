@@ -1,4 +1,4 @@
-package com.ragku.rest.annotation;
+package com.ragku.rest;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })
-public @interface PostMapping {
-	String value() default "";
+public @interface GetMapping {
+	String value();
 }

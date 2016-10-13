@@ -1,4 +1,4 @@
-package com.ragku.rest.util;
+package com.ragku.rest.utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +12,7 @@ import java.util.jar.JarFile;
 
 public final class ClassScanUtil {
 	
-	public static Set<Class<?>> listClasses(String packageName) throws IOException, ClassNotFoundException {
+	public static Set<Class<?>> listClasses(String packageName) throws IOException {
 		Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
 		String packageDirName = packageName.replace('.', '/');
 		Enumeration<URL> dirs = Thread.currentThread().getContextClassLoader().getResources(packageDirName);
@@ -24,7 +24,7 @@ public final class ClassScanUtil {
 				if(packageName.indexOf('.') != -1) {
 					currentPackageName = packageName.substring(0, packageName.lastIndexOf('.'));
 				}
-				names.addAll(getClassFullName(currentPackageName, new File(dirs.nextElement().getFile())));
+				names.addAll(getClassFullName(currentPackageName, new File(url.getFile())));
 			} else if(url.getProtocol().equals("jar")) {
 				JarFile jar = ((JarURLConnection) url.openConnection()).getJarFile();
 				Enumeration<JarEntry> entries = jar.entries();
@@ -36,7 +36,10 @@ public final class ClassScanUtil {
 			
 		}
 		for(String className : names) {
-			classes.add(Thread.currentThread().getContextClassLoader().loadClass(className));
+			try {
+				classes.add(Thread.currentThread().getContextClassLoader().loadClass(className));
+			} catch (ClassNotFoundException e) {
+			}
 		}
 		return classes;
 	}
@@ -57,7 +60,7 @@ public final class ClassScanUtil {
 		return names;
 	}
 	
-	public static Set<String> getClassFullName(String packageName, JarEntry je) {
+	public static Set<String> getClassFullName(final String packageName, JarEntry je) {
 		Set<String> names = new LinkedHashSet<String> ();
 		String name = je.getName();
 		if (name.charAt(0) == '/') {
@@ -66,6 +69,8 @@ public final class ClassScanUtil {
 		if(name.startsWith(packageName) && name.endsWith(".class")) {
 			names.add(je.getName().substring(0, je.getName().length() - 6).replace('/', '.'));
 		}
+		
 		return names;
 	}
+	
 }

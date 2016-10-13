@@ -1,9 +1,7 @@
 package com.ragku.rest.web;
 
-import com.ragku.rest.annotation.Controller;
-import com.ragku.rest.annotation.GetMapping;
+import com.ragku.rest.GetMapping;
 
-@Controller("")
 public class HelloController {
 
 	@GetMapping("/hello")
