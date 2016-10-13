@@ -5,10 +5,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.ragku.rest.utils.ClassScanUtil;
 import com.ragku.rest.utils.ParameterUtil;
 
 public class WebContext {
+	
+	private static final Log log = LogFactory.getLog(RestHandle.class);
 	
 	public static final WebContext wc = new WebContext();
 	
@@ -37,7 +42,7 @@ public class WebContext {
 		ri.setMethod(m);
 		String[] paramNames = ParameterUtil.getMethodParameterNamesByAsm4(clazz, m);
 		ri.setArgs(paramNames);
-		System.out.println("key:" + key + " route:" + ri.toString());
+		log.info(key + " " + ri.toString());
 		routePool.put(key, ri);
 	}
 	
@@ -49,7 +54,9 @@ public class WebContext {
 		if(inited) {
 			return;
 		}
-		Set<Class<?>> classes = ClassScanUtil.listClasses(null ==  packageName ? "com" : packageName);
+		packageName = null ==  packageName ? "com" : packageName;
+		Set<Class<?>> classes = ClassScanUtil.listClasses(packageName);
+		log.info("scan " + packageName + " " + classes.size());
 		for(Class<?> clazz : classes) {
 			for(Method m : clazz.getMethods()) {
 				PostMapping pm = m.getAnnotation(PostMapping.class);

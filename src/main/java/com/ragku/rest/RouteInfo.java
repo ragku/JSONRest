@@ -25,6 +25,9 @@ public class RouteInfo {
 	}
 	
 	public Object invoke(Map<String, Object> params) throws Exception {
+		if(null == args || args.length == 0) {
+			return method.invoke(invoke);
+		}
 		Object[] objs = new Object[args.length];
 		for(int i = 0; i < args.length; i++) {
 			objs[i] = params.get(args[i]);

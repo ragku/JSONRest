@@ -6,9 +6,12 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class RestHandle {
+	
+	private static final Log log = LogFactory.getLog(RestHandle.class);
 
 	private HttpServletRequest requ;
 
@@ -16,28 +19,18 @@ public class RestHandle {
 		this.requ = requ;
 	}
 
-	public Object Handle() {
-		JSONObject json = new JSONObject();
+	public Object Handle() throws Exception {
 		String path = requ.getMethod().toUpperCase() + ":" + requ.getServletPath();
+		log.info(path);
 		RouteInfo ri = WebContext.wc.getRoute(path);
 		if (null == ri) {
-			json.put("success", false);
-			json.put("data", "no route mapping");
-		} else {
-			Map<String, Object> params = new HashMap<String, Object>();
-			for (Enumeration<String> e = requ.getParameterNames(); e.hasMoreElements();) {
-				String key = e.nextElement();
-				params.put(key, requ.getParameter(key));
-			}
-			try {
-				Object result = ri.invoke(params);
-				json.put("data", result);
-				json.put("success", true);
-			} catch (Exception e) {
-				json.put("success", false);
-				json.put("data", e.getMessage());
-			}
+			throw new RestException(404, requ.getServletPath());
 		}
-		return json;
+		Map<String, Object> params = new HashMap<String, Object>();
+		for (Enumeration<String> e = requ.getParameterNames(); e.hasMoreElements();) {
+			String key = e.nextElement();
+			params.put(key, requ.getParameter(key));
+		}
+		return ri.invoke(params);
 	}
 }

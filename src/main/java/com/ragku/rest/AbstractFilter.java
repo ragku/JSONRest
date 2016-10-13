@@ -1,7 +1,6 @@
 package com.ragku.rest;
 
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -18,21 +17,20 @@ import org.apache.commons.logging.LogFactory;
 import com.alibaba.fastjson.JSONObject;
 
 public abstract class AbstractFilter implements Filter {
-	
+
 	private static final Log log = LogFactory.getLog(Filter.class);
-	
-    public abstract String getPackageName();
-    
-    private static AtomicInteger ai = new AtomicInteger(0);
+
+	public abstract String getPackageName();
 	
 	public void init(FilterConfig filterConfig) throws ServletException {
 		try {
-			log.info("init AbstractFilter");
+			log.info("init AbstractFilter " + getPackageName());
 			long start = System.currentTimeMillis();
 			WebContext.wc.init(getPackageName());
 			log.info("init route used: " + (System.currentTimeMillis() - start));
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("init route error：", e);
+			throw new ServletException(e.getMessage());
 		}
 	}
 
@@ -47,9 +45,16 @@ public abstract class AbstractFilter implements Filter {
 		resp.setContentType("application/json; charset=utf-8");
 		resp.setHeader("pragma", "no-cache");
 		resp.setHeader("cache-control", "no-cache");
-		Object obj = new RestHandle(requ).Handle();
-		System.out.println(ai.getAndIncrement());
-		resp.getWriter().print(JSONObject.toJSON(obj));
+		try{
+			Object obj = new RestHandle(requ).Handle();
+			resp.getWriter().print(JSONObject.toJSON(obj));
+		} catch(RestException e) {
+			resp.sendError(e.getHttpStatus(), e.getMessage());
+		} catch (Exception e) {
+			log.error("服务调用错误", e);
+			resp.sendError(500, "serve error");
+		}
+		
 	}
 
 	public void destroy() {
