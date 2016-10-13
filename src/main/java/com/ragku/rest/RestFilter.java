@@ -3,7 +3,7 @@ package com.ragku.rest;
 public class RestFilter extends AbstractFilter {
 	
 	@Override
-	String getPackageName() {
+	public String getPackageName() {
 		return "com.ragku";
 	}
 

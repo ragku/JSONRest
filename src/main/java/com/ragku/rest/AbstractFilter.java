@@ -1,6 +1,7 @@
 package com.ragku.rest;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -11,15 +12,25 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.alibaba.fastjson.JSONObject;
 
 public abstract class AbstractFilter implements Filter {
 	
-	abstract String getPackageName();
+	private static final Log log = LogFactory.getLog(Filter.class);
+	
+    public abstract String getPackageName();
+    
+    private static AtomicInteger ai = new AtomicInteger(0);
 	
 	public void init(FilterConfig filterConfig) throws ServletException {
 		try {
+			log.info("init AbstractFilter");
+			long start = System.currentTimeMillis();
 			WebContext.wc.init(getPackageName());
+			log.info("init route used: " + (System.currentTimeMillis() - start));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -37,6 +48,7 @@ public abstract class AbstractFilter implements Filter {
 		resp.setHeader("pragma", "no-cache");
 		resp.setHeader("cache-control", "no-cache");
 		Object obj = new RestHandle(requ).Handle();
+		System.out.println(ai.getAndIncrement());
 		resp.getWriter().print(JSONObject.toJSON(obj));
 	}
 
