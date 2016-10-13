@@ -32,13 +32,4 @@
             <version>1.2.12</version>
         </dependency>
     </dependencies>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <version>9.3.12.v20160915</version>
-            </plugin>
-        </plugins>
-    </build>
 </project>
