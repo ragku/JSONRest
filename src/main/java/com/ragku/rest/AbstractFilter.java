@@ -46,7 +46,7 @@ public abstract class AbstractFilter implements Filter {
 		resp.setHeader("pragma", "no-cache");
 		resp.setHeader("cache-control", "no-cache");
 		try{
-			Object obj = new RestHandle(requ).Handle();
+			Object obj = WebContext.wc.Handle(requ);
 			resp.getWriter().print(JSONObject.toJSON(obj));
 		} catch(RestException e) {
 			resp.sendError(e.getHttpStatus(), e.getMessage());
