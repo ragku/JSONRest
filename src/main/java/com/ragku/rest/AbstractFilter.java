@@ -22,6 +22,8 @@ public abstract class AbstractFilter implements Filter {
 
 	public abstract String getPackageName();
 	
+	public abstract void filter(final HttpServletRequest requ, final HttpServletResponse resp);
+	
 	public void init(FilterConfig filterConfig) throws ServletException {
 		try {
 			log.info("init route from package: " + getPackageName());
@@ -38,16 +40,12 @@ public abstract class AbstractFilter implements Filter {
 			throws IOException, ServletException {
 		HttpServletResponse resp = (HttpServletResponse) response;
 		HttpServletRequest requ = (HttpServletRequest) request;
-		resp.setHeader("Access-Control-Allow-Origin", "*");
-		resp.setHeader("Access-Control-Allow-Methods", "POST, PUT, GET, OPTIONS, DELETE");
-		resp.setHeader("Access-Control-Max-Age", "3600");
-		resp.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, token");
-		resp.setContentType("application/json; charset=utf-8");
-		resp.setHeader("pragma", "no-cache");
-		resp.setHeader("cache-control", "no-cache");
 		try{
+			filter(requ, resp);
 			Object obj = RestContext.rc.Handle(requ);
-			resp.getWriter().print(JSONObject.toJSON(obj));
+			if(null != obj) {
+				resp.getWriter().print(JSONObject.toJSON(obj));
+			}
 		} catch(RestException e) {
 			resp.sendError(e.getHttpStatus(), e.getMessage());
 		} catch (Exception e) {
