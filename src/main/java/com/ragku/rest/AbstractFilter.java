@@ -24,10 +24,10 @@ public abstract class AbstractFilter implements Filter {
 	
 	public void init(FilterConfig filterConfig) throws ServletException {
 		try {
-			log.info("init AbstractFilter " + getPackageName());
+			log.info("init route from package: " + getPackageName());
 			long start = System.currentTimeMillis();
-			WebContext.wc.init(getPackageName());
-			log.info("init route used: " + (System.currentTimeMillis() - start));
+			RestContext.rc.init(getPackageName());
+			log.info("init route used time: " + (System.currentTimeMillis() - start));
 		} catch (Exception e) {
 			log.error("init route error：", e);
 			throw new ServletException(e.getMessage());
@@ -46,7 +46,7 @@ public abstract class AbstractFilter implements Filter {
 		resp.setHeader("pragma", "no-cache");
 		resp.setHeader("cache-control", "no-cache");
 		try{
-			Object obj = WebContext.wc.Handle(requ);
+			Object obj = RestContext.rc.Handle(requ);
 			resp.getWriter().print(JSONObject.toJSON(obj));
 		} catch(RestException e) {
 			resp.sendError(e.getHttpStatus(), e.getMessage());
