@@ -1,11 +1,11 @@
-package com.ragku.demo;
+package com.ragku.rest;
 
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.ragku.rest.AbstractFilter;
-
-public class DemoFilter extends AbstractFilter{
+@WebFilter(urlPatterns = { "/*" }, filterName = "defaultFilter", asyncSupported = true)
+public class DefaultFilter extends AbstractFilter {
 
 	@Override
 	public String getPackageName() {
@@ -22,5 +22,4 @@ public class DemoFilter extends AbstractFilter{
 		resp.setHeader("pragma", "no-cache");
 		resp.setHeader("cache-control", "no-cache");
 	}
-
 }
