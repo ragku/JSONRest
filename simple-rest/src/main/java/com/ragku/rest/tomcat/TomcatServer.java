@@ -7,27 +7,21 @@ import com.ragku.rest.BaseServlet;
 import com.ragku.rest.RestContext;
 
 public class TomcatServer {
-    static final String docBase = "/tmp/tomcat";
+    static final String baseDir = "/tmp/tomcat";
 
-    /**
-     * 启动服务
-     * @param controllerPackage　controller所在包名，如"com.ragku.api"
-     * @param port 服务端口
-     * @throws Exception　启动异常
-     */
-    public static void run(String controllerPackage, int port) throws Exception {
+    public static void run(String scanPackage, int port) throws Exception {
         Tomcat tomcat = new Tomcat();
         tomcat.setPort(port);
-        tomcat.setBaseDir(docBase);
+        tomcat.setBaseDir(baseDir);
         tomcat.getHost().setAutoDeploy(false);
 
-        Context rootCtx = tomcat.addContext("", docBase);
+        Context rootCtx = tomcat.addContext("", baseDir);
         Tomcat.addServlet(rootCtx, "baseServlet", new BaseServlet());
         rootCtx.addServletMappingDecoded("/*", "baseServlet");
         
         tomcat.start();
         
-        RestContext.rc.init(controllerPackage);
+        RestContext.rc.init(scanPackage);
         tomcat.getServer().await();
     }
 

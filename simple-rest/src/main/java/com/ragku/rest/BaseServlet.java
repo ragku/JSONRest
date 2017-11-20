@@ -17,10 +17,6 @@ public class BaseServlet extends HttpServlet {
     private static final Log log = LogFactory.getLog(BaseServlet.class);
 
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doCommon(req, resp);
-    }
-
-    private void doCommon(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setHeader("Access-Control-Allow-Origin", "*");
         resp.setHeader("Access-Control-Allow-Methods", "POST, PUT, GET, OPTIONS, DELETE");
         resp.setHeader("Access-Control-Max-Age", "3600");
