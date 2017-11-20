@@ -1,45 +1,34 @@
 package com.ragku.rest.tomcat;
 
-import java.io.File;
-
-import org.apache.catalina.WebResourceRoot;
-import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.Context;
 import org.apache.catalina.startup.Tomcat;
-import org.apache.catalina.webresources.DirResourceSet;
-import org.apache.catalina.webresources.StandardRoot;
+
+import com.ragku.rest.BaseServlet;
+import com.ragku.rest.RestContext;
 
 public class TomcatServer {
-	static final int port = 8080;
-	static final String docBase = "src/main/webapp/";
+    static final String docBase = "/tmp/tomcat";
 
-	public static void main(String[] args) throws Exception {
-		
-		
-		String webappDirLocation = "src/main/webapp/";
+    /**
+     * 启动服务
+     * @param controllerPackage　controller所在包名，如"com.ragku.api"
+     * @param port 服务端口
+     * @throws Exception　启动异常
+     */
+    public static void run(String controllerPackage, int port) throws Exception {
         Tomcat tomcat = new Tomcat();
+        tomcat.setPort(port);
+        tomcat.setBaseDir(docBase);
+        tomcat.getHost().setAutoDeploy(false);
 
-        //The port that we should run on can be set into an environment variable
-        //Look for that variable and default to 8080 if it isn't there.
-        String webPort = System.getenv("PORT");
-        if(webPort == null || webPort.isEmpty()) {
-            webPort = "8080";
-        }
-
-        tomcat.setPort(Integer.valueOf(webPort));
-
-        StandardContext ctx = (StandardContext) tomcat.addWebapp("/", new File(webappDirLocation).getAbsolutePath());
-        System.out.println("configuring app with basedir: " + new File("./" + webappDirLocation).getAbsolutePath());
-
-        // Declare an alternative location for your "WEB-INF/classes" dir
-        // Servlet 3.0 annotation will work
-        File additionWebInfClasses = new File("target/classes");
-        WebResourceRoot resources = new StandardRoot(ctx);
-		resources.addPreResources(
-				new DirResourceSet(resources, "/WEB-INF/classes",
-                additionWebInfClasses.getAbsolutePath(), "/"));
-        ctx.setResources(resources);
-
+        Context rootCtx = tomcat.addContext("", docBase);
+        Tomcat.addServlet(rootCtx, "baseServlet", new BaseServlet());
+        rootCtx.addServletMappingDecoded("/*", "baseServlet");
+        
         tomcat.start();
+        
+        RestContext.rc.init(controllerPackage);
         tomcat.getServer().await();
-	}
+    }
+
 }
